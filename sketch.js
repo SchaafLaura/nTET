@@ -35,6 +35,9 @@ let fretClickableStroke = "#8e3672";
 let fretClickableFill = "#c7699a";
 let fretClickableHighlight = "#6669c6";
 
+// buttons
+let buttons = [];
+
 function setup() {
   canvas = createCanvas(windowWidth, windowHeight);
   initSizes();
@@ -42,13 +45,85 @@ function setup() {
   initRatios();
   initFretPositions();
   initStrings();
+
+  initButtons();
 }
 
 function draw() {
   background(bgColor);
   drawFretboard();
-  drawStrings();
   drawFrets();
+  drawStrings();
+
+  drawButtons();
+}
+
+function initButtons() {
+  buttons = [];
+  let addFretButton = new ClickableCircle(
+    fretboardX + fretboardWidth,
+    fretboardY + fretboardHeight + marginLarge,
+    30, "#000000", "#ffffff");
+  addFretButton.setFunction(addFret);
+
+  let removeFretButton = new ClickableCircle(
+    fretboardX + fretboardWidth - marginLarge,
+    fretboardY + fretboardHeight + marginLarge,
+    30, "#000000", "#ffffff");
+  removeFretButton.setFunction(removeFret);
+
+  let increaseTETButton = new ClickableCircle(
+    fretboardX + fretboardWidth,
+    fretboardY + fretboardHeight + marginLarge * 2,
+    30, "#000000", "#ffffff");
+  increaseTETButton.setFunction(increaseTET);
+
+  let decreaseTETButton = new ClickableCircle(
+    fretboardX + fretboardWidth - marginLarge,
+    fretboardY + fretboardHeight + marginLarge * 2,
+    30, "#000000", "#ffffff");
+  decreaseTETButton.setFunction(decreaseTET);
+
+  buttons.push(removeFretButton);
+  buttons.push(addFretButton);
+  buttons.push(increaseTETButton);
+  buttons.push(decreaseTETButton);
+}
+
+function decreaseTET() {
+  TET -= 1;
+  reInit();
+}
+
+function increaseTET() {
+  TET += 1;
+  reInit();
+}
+
+function removeFret() {
+  numberOfFrets -= 1;
+  reInit();
+}
+
+function addFret() {
+  numberOfFrets += 1;
+  reInit();
+}
+
+function reInit() {
+  initSizes();
+
+  initRatios();
+  initFretPositions();
+  initStrings();
+
+  initButtons();
+}
+
+function mousePressed() {
+  for (let i = 0; i < buttons.length; i++) {
+    buttons[i].tryClick();
+  }
 }
 
 function windowResized() {
@@ -56,6 +131,7 @@ function windowResized() {
   initSizes();
   initFretPositions();
   initStrings();
+  initButtons();
 }
 
 function initSizes() {
@@ -72,6 +148,7 @@ function initSizes() {
 }
 
 function initRatios() {
+  ratios = [];
   for (let i = 0; i < numberOfFrets; i++) {
     ratios.push(pow(2, i * (1.0 / TET)));
   }
@@ -92,6 +169,12 @@ function initStrings() {
   for (let i = 0; i < numberOfStrings; i++) {
     let y = strY0 + stringSpacing * i;
     strings.push(new String(strX0, y, strX1, y));
+  }
+}
+
+function drawButtons() {
+  for (let i = 0; i < buttons.length; i++) {
+    buttons[i].display();
   }
 }
 
