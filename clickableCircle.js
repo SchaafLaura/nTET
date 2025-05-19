@@ -1,10 +1,12 @@
 class ClickableCircle {
-    constructor(x, y, r, strokeCol, fillCol) {
+    constructor(x, y, r, strokeCol, fillCol, altCol) {
         this.x = x;
         this.y = y;
         this.r = r;
         this.strokeCol = strokeCol;
         this.fillCol = fillCol;
+        this.toggle = false;
+        this.altCol = altCol;
     }
 
     setFunction(fun) {
@@ -12,6 +14,8 @@ class ClickableCircle {
     }
 
     tryClick() {
+        if (this.fun == null)
+            return;
         let dx = mouseX - this.x;
         let dy = mouseY - this.y;
         let d = dx * dx + dy * dy;

@@ -17,6 +17,7 @@ class String {
                 new ClickableCircle(p, y0, 30, fretClickableStroke, fretClickableFill)
             );
         }
+        this.baseNote = 0;
     }
 
     display() {

@@ -38,6 +38,14 @@ let fretClickableHighlight = "#6669c6";
 // buttons
 let buttons = [];
 
+// scale
+let scaleClickableStroke = fretClickableStroke;
+let scaleClickableFill = fretClickableFill;
+let scaleClickableActive = "#6dbf8a";
+let scale = [0, 2, 5, 7, 10];
+let tuning = [7, 0, 5, 10, 2, 7];
+
+
 function setup() {
   canvas = createCanvas(windowWidth, windowHeight);
   initSizes();
@@ -47,6 +55,8 @@ function setup() {
   initStrings();
 
   initButtons();
+
+  init12TETeMajor();
 }
 
 function draw() {
@@ -56,6 +66,16 @@ function draw() {
   drawStrings();
 
   drawButtons();
+}
+
+function init12TETeMajor() {
+  for (let i = 0; i < strings.length; i++) {
+    strings[i].baseNote = tuning[i];
+  }
+}
+
+function clearScale() {
+  scale = [];
 }
 
 function initButtons() {
@@ -88,6 +108,41 @@ function initButtons() {
   buttons.push(addFretButton);
   buttons.push(increaseTETButton);
   buttons.push(decreaseTETButton);
+
+  // scale buttons
+  for (let i = 0; i < TET; i++) {
+    let x = map(i, 0, TET - 1, fretboardX, fretboardX + fretboardWidth);
+    let b = new ClickableCircle(
+      x,
+      fretboardY - marginLarge,
+      30,
+      scaleClickableStroke, scaleClickableFill, scaleClickableActive
+    );
+    b.note = i;
+    b.setFunction(() => {
+      b.toggle = !b.toggle;
+      if (b.toggle) {
+        scale.push(b.note);
+      } else {
+        const index = scale.indexOf(b.note);
+        if (index > -1) {
+          scale.splice(index, 1);
+        }
+      }
+      let tmp = b.fillCol;
+      b.fillCol = b.altCol;
+      b.altCol = tmp;
+      scale = scale.sort((a, b) => a - b);
+    });
+    if (scale.includes(i)) {
+      b.toggle = true;
+      let tmp = b.fillCol;
+      b.fillCol = b.altCol;
+      b.altCol = tmp;
+    }
+
+    buttons.push(b);
+  }
 }
 
 function decreaseTET() {
